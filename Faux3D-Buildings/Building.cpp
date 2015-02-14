@@ -17,10 +17,12 @@ Building::Building(sf::Vector2f pos, int dimX, int dimY, float height)
 
 
 	std::string fileToLoad = "BuildingTileSheet.png";
+	//std::string fileToLoad = "bricktile.jpg";
 	if (!texture.loadFromFile(fileToLoad))
 	{
 		std::cerr << "Can't load texture: " << fileToLoad << std::endl;
 	}
+	texture.setRepeated(true);
 
 	mBuildingQuad = sf::VertexArray(sf::Quads, 12);
 
@@ -46,6 +48,11 @@ Building::Building(sf::Vector2f pos, int dimX, int dimY, float height)
 	mBuildingQuad[2].texCoords = sf::Vector2f(500, 500);
 	mBuildingQuad[3].texCoords = sf::Vector2f(500, 0);
 
+	/*mBuildingQuad[0].texCoords = sf::Vector2f(0, 425);
+	mBuildingQuad[1].texCoords = sf::Vector2f(0, 0);
+	mBuildingQuad[2].texCoords = sf::Vector2f(425, 0);
+	mBuildingQuad[3].texCoords = sf::Vector2f(425, 425);*/
+
 
 	//mBuildingQuad[4].color = sf::Color(168, 219, 168);
 	//mBuildingQuad[5].color = sf::Color(168, 219, 168);
@@ -57,6 +64,11 @@ Building::Building(sf::Vector2f pos, int dimX, int dimY, float height)
 	mBuildingQuad[5].texCoords = sf::Vector2f(1000, 0);
 	mBuildingQuad[6].texCoords = sf::Vector2f(1000, 500);
 	mBuildingQuad[7].texCoords = sf::Vector2f(500, 500);
+
+	//mBuildingQuad[4].texCoords = sf::Vector2f(0, 0);
+	//mBuildingQuad[5].texCoords = sf::Vector2f(425, 0);
+	//mBuildingQuad[6].texCoords = sf::Vector2f(425, 425);
+	//mBuildingQuad[7].texCoords = sf::Vector2f(0, 425);
 }
 
 void Building::draw(sf::RenderTarget& target, sf::RenderStates states) const

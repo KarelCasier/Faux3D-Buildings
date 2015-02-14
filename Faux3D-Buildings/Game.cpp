@@ -7,6 +7,12 @@ const sf::Time Game::TimePerFrame = sf::seconds(1.f / 60.f); // = 0.6 seconds pe
 
 Game* Game::s_pInstance = nullptr;
 
+bool sortByDistance(Game::BuildingPtr& b1, Game::BuildingPtr& b2)
+{
+	const sf::Vector2f& viewPos = TheGame::Instance()->getWorldView()->getCenter();
+	return (Distance(viewPos, b1->getCenter()) > Distance(viewPos, b2->getCenter()));
+}
+
 Game::Game()
 : mWindow(sf::VideoMode(2560, 1440), "Faux3D-Buildings")
 , mFont()
@@ -169,6 +175,8 @@ void Game::update(sf::Time dTime)
 		building->update(dTime);
 	}
 	positionMarker.setPosition(camPos);
+
+	std::sort(buildingsVector.begin(), buildingsVector.end(), sortByDistance);
 }
 
 void Game::updateStatistics(sf::Time elapsedTime)
