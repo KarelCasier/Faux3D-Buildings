@@ -1,20 +1,20 @@
 #include "Game.h"
 #include <algorithm>
 #include <functional>
-#include "HelperFunctions.hpp"
+#include "Utilities.h"
 
 const sf::Time Game::TimePerFrame = sf::seconds(1.f / 60.f); // = 0.6 seconds per frame, therefore 60fps
 
 Game* Game::s_pInstance = nullptr;
 
 Game::Game()
-: mWindow(sf::VideoMode(1280, 720), "Faux3D-Buildings")
+: mWindow(sf::VideoMode(2560, 1440), "Faux3D-Buildings")
 , mFont()
 , mStatisticsText()
 , mStatisticsUpdateTime()
 , mStatisticsNumFrames(0)
-, mWorldView(sf::Vector2f(0.f,0.f), sf::Vector2f(1280.0, 720.f))
-, mUIView(sf::Vector2f(640.f, 360.f), sf::Vector2f(1280.f, 720.f))
+, mWorldView(sf::Vector2f(0.f, 0.f), sf::Vector2f(2560, 1440))
+, mUIView(sf::Vector2f(2560/2, 1440 / 2), sf::Vector2f(2560, 1440))
 , friction(0.9)
 , moveVel(200)
 , camPos(600, 600)
@@ -32,19 +32,19 @@ Game::Game()
 	mTextBackground.setSize(sf::Vector2f(125.f, 35.f));
 	mTextBackground.setFillColor(sf::Color(110, 110, 110, 80));
 	
-	BuildingPtr b1(new Building(sf::Vector2f(-300, 100), 300, 300));
-	BuildingPtr b2(new Building(sf::Vector2f(-300, 600), 300, 300));
-	BuildingPtr b3(new Building(sf::Vector2f(-300, 1100), 300, 300));
+	BuildingPtr b1(new Building(sf::Vector2f(-300, 100), 300, 300, 0.5f));
+	BuildingPtr b2(new Building(sf::Vector2f(-300, 600), 300, 300, 1.f));
+	BuildingPtr b3(new Building(sf::Vector2f(-300, 1100), 300, 300, 0.5f));
 
-	BuildingPtr b4(new Building(sf::Vector2f(200, 100), 300, 300));
-	BuildingPtr b5(new Building(sf::Vector2f(200, 600), 300, 300));
-	BuildingPtr b6(new Building(sf::Vector2f(200, 1100), 300, 300));
+	BuildingPtr b4(new Building(sf::Vector2f(200, 100), 300, 300, 1.f));
+	BuildingPtr b5(new Building(sf::Vector2f(200, 600), 300, 300, 1.5f));
+	BuildingPtr b6(new Building(sf::Vector2f(200, 1100), 300, 300, 1.f));
 
-	BuildingPtr b7(new Building(sf::Vector2f(700, 100), 300, 300));
-	BuildingPtr b8(new Building(sf::Vector2f(700, 600), 300, 300));
-	BuildingPtr b9(new Building(sf::Vector2f(700, 1100), 300, 300));
+	BuildingPtr b7(new Building(sf::Vector2f(700, 100), 300, 300, 0.5f));
+	BuildingPtr b8(new Building(sf::Vector2f(700, 600), 300, 300, 1.f));
+	BuildingPtr b9(new Building(sf::Vector2f(700, 1100), 300, 300, 0.5f));
 
-	//BuildingPtr b10(new Building(sf::Vector2f(-300, -600), 1100, 600));
+	BuildingPtr b10(new Building(sf::Vector2f(-300, -700), 1400, 600, 1.f));
 
 	buildingsVector.push_back(std::move(b1));
 	buildingsVector.push_back(std::move(b2));
@@ -55,12 +55,14 @@ Game::Game()
 	buildingsVector.push_back(std::move(b7));
 	buildingsVector.push_back(std::move(b8));
 	buildingsVector.push_back(std::move(b9));
-	//buildingsVector.push_back(std::move(b10));
+	buildingsVector.push_back(std::move(b10));
 
 	positionMarker = sf::CircleShape(5);
+	positionMarker.setFillColor(sf::Color(255, 255, 255));
+	positionMarker.setOrigin(5, 5);
 	ground = sf::RectangleShape(sf::Vector2f(3000, 3000));
-	ground.setPosition(sf::Vector2f(-1500, -1500));
-	ground.setFillColor(sf::Color(85,150,50));
+	ground.setPosition(sf::Vector2f(-0, -0));
+	ground.setFillColor(sf::Color(50,50,50));
 	
 }
 

@@ -24,7 +24,7 @@
     <ClCompile Include="Game.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="HelperFunctions.cpp">
+    <ClCompile Include="Utilities.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -35,8 +35,13 @@
     <ClInclude Include="Game.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="HelperFunctions.hpp">
+    <ClInclude Include="Utilities.h">
       <Filter>Headers</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ToDo.txt">
+      <Filter>Headers</Filter>
+    </Text>
   </ItemGroup>
 </Project>

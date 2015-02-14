@@ -299,13 +299,16 @@
   <ItemGroup>
     <ClCompile Include="Building.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="HelperFunctions.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Building.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="HelperFunctions.hpp" />
+    <ClInclude Include="Utilities.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ToDo.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

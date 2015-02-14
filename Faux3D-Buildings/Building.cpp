@@ -1,20 +1,22 @@
 #include "Building.h"
 #include <iostream>
 #include "Game.h"
-#include "HelperFunctions.hpp"
+#include "Utilities.h"
 
-Building::Building(sf::Vector2f pos, int width, int height)
+Building::Building(sf::Vector2f pos, int dimX, int dimY, float height)
 : mPos(pos)
-, mWidth(width)
+, dimentions(dimX, dimY)
 , mHeight(height)
 {
 	roofTopLeft = pos;
 	groundTopLeft = pos;
+	groundTopRight = pos + sf::Vector2f(dimentions.x,0);
+	groundBotLeft = pos + sf::Vector2f(0, dimentions.y);
+	groundBotRight = pos + sf::Vector2f(dimentions.x, dimentions.y);
+	groundCenter = groundTopLeft + sf::Vector2f(dimentions.x / 2.f, dimentions.y / 2.f);
 
-	groundCenter = groundTopLeft + sf::Vector2f(mWidth / 2.f, mHeight / 2.f);
 
-
-	std::string fileToLoad = "BuildingTileSheetFlat.png";
+	std::string fileToLoad = "BuildingTileSheet.png";
 	if (!texture.loadFromFile(fileToLoad))
 	{
 		std::cerr << "Can't load texture: " << fileToLoad << std::endl;
@@ -22,31 +24,35 @@ Building::Building(sf::Vector2f pos, int width, int height)
 
 	mBuildingQuad = sf::VertexArray(sf::Quads, 12);
 
-	//Top
-	mBuildingQuad[8].position = sf::Vector2f(roofTopLeft.x,				roofTopLeft.y);
-	mBuildingQuad[9].position = sf::Vector2f(roofTopLeft.x + mWidth,	roofTopLeft.y);
-	mBuildingQuad[10].position = sf::Vector2f(roofTopLeft.x + mWidth,	roofTopLeft.y + mHeight);
-	mBuildingQuad[11].position = sf::Vector2f(roofTopLeft.x,				roofTopLeft.y + mHeight);
+	//mBuildingQuad[8].color = sf::Color(121, 189, 154);
+	//mBuildingQuad[9].color = sf::Color(121, 189, 154);
+	//mBuildingQuad[10].color = sf::Color(121, 189, 154);
+	//mBuildingQuad[11].color = sf::Color(121, 189, 154);
+	
 	mBuildingQuad[8].texCoords = sf::Vector2f(0, 0);
 	mBuildingQuad[9].texCoords = sf::Vector2f(500, 0);
 	mBuildingQuad[10].texCoords = sf::Vector2f(500, 500);
 	mBuildingQuad[11].texCoords = sf::Vector2f(0, 500);
+	
 
-	//Right
-	mBuildingQuad[0].position = sf::Vector2f(roofTopLeft.x + mWidth,	roofTopLeft.y);
-	mBuildingQuad[1].position = sf::Vector2f(groundTopLeft.x + mWidth,	groundTopLeft.y);
-	mBuildingQuad[2].position = sf::Vector2f(groundTopLeft.x + mWidth,	groundTopLeft.y + mHeight);
-	mBuildingQuad[3].position = sf::Vector2f(roofTopLeft.x + mWidth,	roofTopLeft.y + mHeight);
+	//mBuildingQuad[0].color = sf::Color(168, 219, 168);
+	//mBuildingQuad[1].color = sf::Color(168, 219, 168);
+	//mBuildingQuad[2].color = sf::Color(168, 219, 168);
+	//mBuildingQuad[3].color = sf::Color(168, 219, 168);
+
+	
 	mBuildingQuad[0].texCoords = sf::Vector2f(1000, 0);
 	mBuildingQuad[1].texCoords = sf::Vector2f(1000, 500);
 	mBuildingQuad[2].texCoords = sf::Vector2f(500, 500);
 	mBuildingQuad[3].texCoords = sf::Vector2f(500, 0);
 
-	//Bot
-	mBuildingQuad[4].position = sf::Vector2f(roofTopLeft.x,				roofTopLeft.y + mHeight);
-	mBuildingQuad[5].position = sf::Vector2f(roofTopLeft.x + mWidth,	roofTopLeft.y + mHeight);
-	mBuildingQuad[6].position = sf::Vector2f(groundTopLeft.x + mWidth, groundTopLeft.y + mHeight);
-	mBuildingQuad[7].position = sf::Vector2f(groundTopLeft.x,			groundTopLeft.y + mHeight);
+
+	//mBuildingQuad[4].color = sf::Color(168, 219, 168);
+	//mBuildingQuad[5].color = sf::Color(168, 219, 168);
+	//mBuildingQuad[6].color = sf::Color(168, 219, 168);
+	//mBuildingQuad[7].color = sf::Color(168, 219, 168);
+	
+	
 	mBuildingQuad[4].texCoords = sf::Vector2f(500, 0);
 	mBuildingQuad[5].texCoords = sf::Vector2f(1000, 0);
 	mBuildingQuad[6].texCoords = sf::Vector2f(1000, 500);
@@ -59,62 +65,79 @@ void Building::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	states.texture = &texture;
 
 	target.draw(mBuildingQuad, states);
-	//target.draw(line, 2, sf::Lines);
+
+	sf::Vector2f windowPos = TheGame::Instance()->getWorldView()->getCenter();
+	sf::RenderWindow* pWin = TheGame::Instance()->getWindow();
+	//drawDebugLine(windowPos, mBuildingQuad[0].position, *pWin);
+	//drawDebugLine(windowPos, mBuildingQuad[1].position, *pWin);
+	//drawDebugLine(windowPos, mBuildingQuad[2].position, *pWin);
+	//drawDebugLine(windowPos, mBuildingQuad[3].position, *pWin);
+	//drawDebugLine(windowPos, mBuildingQuad[4].position, *pWin);
+	//drawDebugLine(windowPos, mBuildingQuad[5].position, *pWin);
+	//drawDebugLine(windowPos, mBuildingQuad[6].position, *pWin);
+	//drawDebugLine(windowPos, mBuildingQuad[7].position, *pWin);
+
+	///< Roof
+	//drawDebugLine(windowPos, mBuildingQuad[8].position, *pWin, sf::Color::Red);
+	//drawDebugLine(windowPos, mBuildingQuad[9].position, *pWin, sf::Color::Red);
+	//drawDebugLine(windowPos, mBuildingQuad[10].position, *pWin, sf::Color::Red);
+	//drawDebugLine(windowPos, mBuildingQuad[11].position, *pWin, sf::Color::Red);
 }
 
 void Building::update(sf::Time dTime)
 {
 	sf::Vector2f windowPos = TheGame::Instance()->getWorldView()->getCenter();
 
-	//line[0] = sf::Vertex(windowPos);
-	//line[1] = sf::Vertex(groundCenter);
-
-	float rotation = (float)(std::atan2f(groundCenter.y - windowPos.y, groundCenter.x - windowPos.x));
-
-	float height = getLengthOfVector2f(sf::Vector2f(groundCenter.x - windowPos.x, groundCenter.y - windowPos.y)) / 2.5;
-
-
-
-	roofTopLeft.x = (groundCenter.x + height * std::cosf(rotation)) - mWidth / 2.f;
-	roofTopLeft.y = (groundCenter.y + height * std::sinf(rotation)) - mHeight / 2.f;
-
-	float roofPerspectiveZoom = ((mWidth + mHeight) / 2) / 8; //Roof is bigger then the base
-
 	//Roof
-	mBuildingQuad[8].position = sf::Vector2f(roofTopLeft.x - roofPerspectiveZoom,				roofTopLeft.y - roofPerspectiveZoom);
-	mBuildingQuad[9].position = sf::Vector2f(roofTopLeft.x + mWidth + roofPerspectiveZoom,		roofTopLeft.y - roofPerspectiveZoom);
-	mBuildingQuad[10].position = sf::Vector2f(roofTopLeft.x + mWidth + roofPerspectiveZoom,		roofTopLeft.y + mHeight + roofPerspectiveZoom);
-	mBuildingQuad[11].position = sf::Vector2f(roofTopLeft.x - roofPerspectiveZoom,				roofTopLeft.y + mHeight + roofPerspectiveZoom);
+	mBuildingQuad[8].position = groundTopLeft + (groundTopLeft - windowPos) * mHeight;
+
+	mBuildingQuad[9].position = groundTopRight + (groundTopRight - windowPos) * mHeight;
+	mBuildingQuad[10].position = groundBotRight + (groundBotRight - windowPos) * mHeight;
+	mBuildingQuad[11].position = groundBotLeft + (groundBotLeft - windowPos) * mHeight;
 
 	//East/West Wall
-	if (roofTopLeft.x - roofPerspectiveZoom < groundTopLeft.x)
+	if (windowPos.x > groundTopRight.x)
 	{ //Display East Wall
-		mBuildingQuad[0].position = sf::Vector2f(roofTopLeft.x + mWidth + roofPerspectiveZoom,	roofTopLeft.y - roofPerspectiveZoom);
-		mBuildingQuad[1].position = sf::Vector2f(groundTopLeft.x + mWidth,						groundTopLeft.y);
-		mBuildingQuad[2].position = sf::Vector2f(groundTopLeft.x + mWidth,						groundTopLeft.y + mHeight);
-		mBuildingQuad[3].position = sf::Vector2f(roofTopLeft.x + mWidth + roofPerspectiveZoom,	roofTopLeft.y + mHeight + roofPerspectiveZoom);
+		mBuildingQuad[0].position = mBuildingQuad[9].position;
+		mBuildingQuad[1].position = groundTopRight;
+		mBuildingQuad[2].position = groundBotRight;
+		mBuildingQuad[3].position = mBuildingQuad[10].position;
+	}
+	else if (windowPos.x < groundTopLeft.x)
+	{ //Display West Wall
+		mBuildingQuad[0].position = groundTopLeft;
+		mBuildingQuad[1].position = mBuildingQuad[8].position;
+		mBuildingQuad[2].position = mBuildingQuad[11].position;
+		mBuildingQuad[3].position = groundBotLeft;
 	}
 	else
-	{ //Display West Wall
-		mBuildingQuad[0].position = sf::Vector2f(groundTopLeft.x,								groundTopLeft.y);
-		mBuildingQuad[1].position = sf::Vector2f(roofTopLeft.x - roofPerspectiveZoom,			roofTopLeft.y - roofPerspectiveZoom);
-		mBuildingQuad[2].position = sf::Vector2f(roofTopLeft.x - roofPerspectiveZoom,			roofTopLeft.y + mHeight + roofPerspectiveZoom);
-		mBuildingQuad[3].position = sf::Vector2f(groundTopLeft.x,								groundTopLeft.y + mHeight);
+	{ //No wall to display
+		mBuildingQuad[0].position = sf::Vector2f(0,0);
+		mBuildingQuad[1].position = sf::Vector2f(0, 0);
+		mBuildingQuad[2].position = sf::Vector2f(0, 0);
+		mBuildingQuad[3].position = sf::Vector2f(0, 0);
 	}
 
 	//North/South Wall
-	if (roofTopLeft.y - roofPerspectiveZoom < groundTopLeft.y)
+	if (windowPos.y > groundBotLeft.y)
 	{ //Display South Wall
-		mBuildingQuad[4].position = sf::Vector2f(roofTopLeft.x - roofPerspectiveZoom,			roofTopLeft.y + mHeight + roofPerspectiveZoom);
-		mBuildingQuad[5].position = sf::Vector2f(roofTopLeft.x + mWidth + roofPerspectiveZoom,	roofTopLeft.y + mHeight + roofPerspectiveZoom);
-		mBuildingQuad[6].position = sf::Vector2f(groundTopLeft.x + mWidth,						groundTopLeft.y + mHeight);
-		mBuildingQuad[7].position = sf::Vector2f(groundTopLeft.x,								groundTopLeft.y + mHeight);
+		mBuildingQuad[4].position = mBuildingQuad[11].position;
+		mBuildingQuad[5].position = mBuildingQuad[10].position;
+		mBuildingQuad[6].position = groundBotRight;
+		mBuildingQuad[7].position = groundBotLeft;
+	}
+	else if (windowPos.y < groundTopLeft.y)
+	{ //Display North Wall
+		mBuildingQuad[4].position = groundTopLeft;
+		mBuildingQuad[5].position = groundTopRight;
+		mBuildingQuad[6].position = mBuildingQuad[9].position;
+		mBuildingQuad[7].position = mBuildingQuad[8].position;
 	}
 	else
-	{ //Display North Wall
-		mBuildingQuad[4].position = sf::Vector2f(groundTopLeft.x,								groundTopLeft.y);
-		mBuildingQuad[5].position = sf::Vector2f(groundTopLeft.x + mWidth,						groundTopLeft.y);
-		mBuildingQuad[6].position = sf::Vector2f(roofTopLeft.x + mWidth + roofPerspectiveZoom, roofTopLeft.y - roofPerspectiveZoom);
-		mBuildingQuad[7].position = sf::Vector2f(roofTopLeft.x - roofPerspectiveZoom,			roofTopLeft.y - roofPerspectiveZoom);
+	{ //No wall to display
+		mBuildingQuad[4].position = sf::Vector2f(0, 0);
+		mBuildingQuad[5].position = sf::Vector2f(0, 0);
+		mBuildingQuad[6].position = sf::Vector2f(0, 0);
+		mBuildingQuad[7].position = sf::Vector2f(0, 0);
 	}
 }
