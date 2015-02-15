@@ -2,10 +2,20 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 
-class Building : public sf::Drawable, public sf::Transformable
+#include "ResourceHolder.hpp"
+#include "ResourceIdentifiers.hpp"
+
+class Object3D : public sf::Drawable, public sf::Transformable
 {
 public:
-	Building(sf::Vector2f pos, int dimX, int dimY, float height);
+
+	enum Object3DType
+	{
+		Building,
+		LampPost
+	};
+
+	Object3D(const TextureHolder& textures, sf::Vector2f pos, sf::Vector2i dim, Object3DType type, float height);
 
 	void update(sf::Time dTime);
 
@@ -15,9 +25,11 @@ private:
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 private:
-	sf::VertexArray mBuildingQuad;
+	sf::VertexArray mObject3DQuad;
 
-	sf::Texture		texture;
+	Object3DType	mType;
+
+	sf::Texture		objectTexture;
 
 	sf::Vector2f	roofTopLeft;
 
@@ -33,4 +45,6 @@ private:
 	float			mHeight;
 
 	sf::Vector2f	mPos;
+
+	const TextureHolder&	texturesConstRef;
 };

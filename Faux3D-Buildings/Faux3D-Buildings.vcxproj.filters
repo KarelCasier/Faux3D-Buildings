@@ -18,24 +18,30 @@
     <ClCompile Include="main.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Building.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Game.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Utilities.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Object3D.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Building.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="Game.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="Utilities.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceHolder.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceIdentifiers.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Object3D.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
@@ -43,5 +49,10 @@
     <Text Include="ToDo.txt">
       <Filter>Headers</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ResourceHolder.inl">
+      <Filter>Headers</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -60,3 +60,16 @@ float clamp(const float& value, const float& min, const float& max)
 		result = value;
 	return result;
 }
+
+std::string vectorToStr(const sf::Vector2f& vec)
+{
+	return std::string(" [ " + std::to_string(vec.x) + " , " + std::to_string(vec.y) + " ] ");
+}
+std::string vectorToStr(const sf::Vector2i& vec)
+{
+	return std::string(" [ " + std::to_string(vec.x) + " , " + std::to_string(vec.y) + " ] ");
+}
+std::string vectorToStr(const sf::Vector2u& vec)
+{
+	return std::string(" [ " + std::to_string(vec.x) + " , " + std::to_string(vec.y) + " ] ");
+}

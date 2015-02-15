@@ -6,13 +6,16 @@
 #include <sstream>
 #include <array>
 #include <vector>
-#include "Building.h"
+#include "Object3D.h"
+
+#include "ResourceHolder.hpp"
+#include "ResourceIdentifiers.hpp"
 
 class Game : private sf::NonCopyable
 {
 public:
 
-	typedef std::unique_ptr<Building> BuildingPtr;
+	typedef std::unique_ptr<Object3D> Object3DPtr;
 
 	static Game* Instance()
 	{
@@ -52,7 +55,8 @@ private:
 	sf::View				mUIView;
 	sf::View				mWorldView;
 
-	std::vector<BuildingPtr>buildingsVector;
+	std::vector<Object3DPtr>		Object3DsVector;
+	std::vector<sf::RectangleShape*>groundTiles;
 
 	sf::Vector2f			camPos;
 	float					moveVel;
@@ -62,6 +66,9 @@ private:
 
 	sf::CircleShape			positionMarker;
 	sf::RectangleShape		ground;
+
+	TextureHolder			mTextures;
+	FontHolder				mFonts;
 
 };
 
