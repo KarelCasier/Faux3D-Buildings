@@ -10,7 +10,7 @@ Game* Game::s_pInstance = nullptr;														///< Initiate singleton pointer 
 bool sortByDistance(Game::Object3DPtr& o1, Game::Object3DPtr& o2)						///< Custom comparison function for sorting the Object3Ds before rendering
 {
 	const sf::Vector2f& viewPos = TheGame::Instance()->getWorldView()->getCenter();
-	return (Distance(viewPos, o1->getCenter()) > Distance(viewPos, o2->getCenter()));
+	return (Distance(viewPos, o1->getCenter()) - o1->getZPos() * 100 > Distance(viewPos, o2->getCenter()) - o2->getZPos() * 100);
 }
 
 Game::Game()
@@ -21,11 +21,12 @@ Game::Game()
 , mStatisticsNumFrames(0)
 , mWorldView(sf::Vector2f(0.f, 0.f), (sf::Vector2f)mWindow.getSize())
 , mUIView((sf::Vector2f)(mWindow.getSize()) / 2.f, (sf::Vector2f)mWindow.getSize())
+, worldZoom(1.f)
 , friction(0.9)
-, moveVel(200)
+, moveVel(400)
 , camPos(600, 600)
 {
-		//mWindow.setKeyRepeatEnabled(false);
+	mWindow.setKeyRepeatEnabled(false);
 	mWindow.setVerticalSyncEnabled(true);
 
 	mFonts.load(FontID::Default, "MYRIADPRO-BOLD.OTF");
@@ -43,12 +44,12 @@ Game::Game()
 	mTextures.load(TextureID::BuildingTileSet, "BuildingTileSheet.png");
 	mTextures.load(TextureID::LampPostTileSet, "LampPostTileSheet.png");
 
-	std::array<std::array<int, 11>, 11> layout = 
+	std::array<std::array<int, 11>, 11> layout =
 	{ {
 		{ 4, 2, 4, 2, 4, 2, 4, 2, 4, 2, 4 },
 		{ 1, 7, 1, 7, 1, 7, 1, 6, 1, 7, 1 },
 		{ 4, 2, 4, 2, 4, 2, 4, 2, 4, 2, 4 },
-		{ 1, 7, 1, 7, 1, 6, 1, 8, 1, 7, 1 },
+		{ 1, 7, 1, 7, 5, 6, 1, 8, 1, 7, 1 },
 		{ 4, 2, 4, 2, 4, 7, 4, 2, 4, 2, 4 },
 		{ 1, 7, 1, 7, 1, 5, 1, 6, 1, 7, 1 },
 		{ 4, 2, 4, 2, 4, 2, 4, 2, 4, 2, 4 },
@@ -74,7 +75,7 @@ Game::Game()
 			else if (layout[i][j] == 2)
 			{
 				sf::RectangleShape* tile(new sf::RectangleShape(sf::Vector2f(300, 300)));
-				tile->setPosition(sf::Vector2f(i * 300 + 150, j * 300 +150));
+				tile->setPosition(sf::Vector2f(i * 300 + 150, j * 300 + 150));
 				tile->setTexture(&mTextures.get(TextureID::Road2Way));
 				tile->setOrigin(150, 150);
 				///atile->rotate(90.f);
@@ -87,16 +88,33 @@ Game::Game()
 				tile->setTexture(&mTextures.get(TextureID::Road4Way));
 				groundTiles.push_back(tile);
 
-								///< Place Lamp Posts at the corner of each intersection block
-				Object3DPtr lamp1(new Object3D(mTextures, sf::Vector2f(i * 300 + 25, j * 300 + 25), sf::Vector2i(10, 10), Object3D::Object3DType::LampPost, 0.1f));
-				Object3DPtr lamp2(new Object3D(mTextures, sf::Vector2f(i * 300 + 270, j * 300 + 25), sf::Vector2i(10, 10), Object3D::Object3DType::LampPost, 0.1f));
-				Object3DPtr lamp3(new Object3D(mTextures, sf::Vector2f(i * 300 + 25, j * 300 + 270), sf::Vector2i(10, 10), Object3D::Object3DType::LampPost, 0.1f));
-				Object3DPtr lamp4(new Object3D(mTextures, sf::Vector2f(i * 300 + 270, j * 300 + 270), sf::Vector2i(10, 10), Object3D::Object3DType::LampPost, 0.1f));
+				///< Place Lamp Posts at the corner of each intersection block
+				Object3DPtr lamp1(new Object3D(mTextures, sf::Vector2f(i * 300 + 27, j * 300 + 27), sf::Vector2i(5, 5), Object3D::Object3DType::LampPost, 0.1f));
+				Object3DPtr lamp2(new Object3D(mTextures, sf::Vector2f(i * 300 + 272, j * 300 + 27), sf::Vector2i(5, 5), Object3D::Object3DType::LampPost, 0.1f));
+				Object3DPtr lamp3(new Object3D(mTextures, sf::Vector2f(i * 300 + 27, j * 300 + 272), sf::Vector2i(5, 5), Object3D::Object3DType::LampPost, 0.1f));
+				Object3DPtr lamp4(new Object3D(mTextures, sf::Vector2f(i * 300 + 272, j * 300 + 272), sf::Vector2i(5, 5), Object3D::Object3DType::LampPost, 0.1f));
 
 				Object3DsVector.push_back(std::move(lamp1));
 				Object3DsVector.push_back(std::move(lamp2));
 				Object3DsVector.push_back(std::move(lamp3));
 				Object3DsVector.push_back(std::move(lamp4));
+
+				Object3DPtr lamptop1(new Object3D(mTextures, sf::Vector2f(i * 300 + 25, j * 300 + 25), sf::Vector2i(10, 10), Object3D::Object3DType::LampTop, 0.01f));
+				Object3DPtr lamptop2(new Object3D(mTextures, sf::Vector2f(i * 300 + 270, j * 300 + 25), sf::Vector2i(10, 10), Object3D::Object3DType::LampTop, 0.01f));
+				Object3DPtr lamptop3(new Object3D(mTextures, sf::Vector2f(i * 300 + 25, j * 300 + 270), sf::Vector2i(10, 10), Object3D::Object3DType::LampTop, 0.01f));
+				Object3DPtr lamptop4(new Object3D(mTextures, sf::Vector2f(i * 300 + 270, j * 300 + 270), sf::Vector2i(10, 10), Object3D::Object3DType::LampTop, 0.01f));
+
+				//Object3DsVector.push_back(std::move(lamptop1));
+				//Object3DsVector.push_back(std::move(lamptop2));
+				Object3DsVector.push_back(std::move(lamptop3));
+				Object3DsVector.push_back(std::move(lamptop4));
+
+				Object3DPtr lampbridge(new Object3D(mTextures, sf::Vector2f(i * 300 + 25, j * 300 + 25), sf::Vector2i(260, 10), Object3D::Object3DType::Building, 0.01f));
+				lampbridge->setZPos(0.1f);
+				Object3DsVector.push_back(std::move(lampbridge));
+
+
+
 			}
 			else if (layout[i][j] == 5)
 			{
@@ -118,9 +136,14 @@ Game::Game()
 				Object3DPtr building(new Object3D(mTextures, sf::Vector2f(i * 300, j * 300), sf::Vector2i(300, 300), Object3D::Object3DType::Building, 1.5f));
 				Object3DsVector.push_back(std::move(building));
 			}
-			
+
 		}
 	}
+
+	Object3DPtr buildingBridge(new Object3D(mTextures, sf::Vector2f(3 * 300 + 100, 2 * 300), sf::Vector2i(100, 300), Object3D::Object3DType::Building, 0.1f));
+	buildingBridge->setZPos(.5f);
+	Object3DsVector.push_back(std::move(buildingBridge));
+
 
 	//Object3DPtr lamp1(new Object3D(mTextures, sf::Vector2f(0 * 300 + 25, 0 * 300 + 25), sf::Vector2i(10, 10), Object3D::Object3DType::LampPost, 0.075f));
 	//Object3DPtr lamp2(new Object3D(mTextures, sf::Vector2f(625, 625), sf::Vector2i(10, 10), Object3D::Object3DType::LampPost, 0.075f));
@@ -132,8 +155,8 @@ Game::Game()
 	positionMarker.setOrigin(5, 5);
 	ground = sf::RectangleShape(sf::Vector2f(3000, 3000));
 	ground.setPosition(sf::Vector2f(-0, -0));
-	ground.setFillColor(sf::Color(50,50,50));
-	
+	ground.setFillColor(sf::Color(50, 50, 50));
+
 }
 
 void Game::run()
@@ -166,50 +189,27 @@ void Game::processEvents()
 	{
 		if (event.type == sf::Event::Closed)
 			mWindow.close();
+
+		if (event.type == sf::Event::KeyPressed)
+		{
+			handlePlayerInput(event.key.code, true);
+		}
+		if (event.type == sf::Event::KeyReleased)
+		{
+			handlePlayerInput(event.key.code, false);
+		}
 	}
 
-	// realtime events
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
 	{
-		sf::Vector2i mousePos(sf::Mouse::getPosition(mWindow));
-		std::cout << vectorToStr(camPos) << std::endl;
-	}
-
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
-	{
-	}
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-	{
-		upPressed = true;
-	}
-	else
-	{
-		upPressed = false;
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-	{
-		rightPressed = true;
-	}
-	else
-	{
-		rightPressed = false;
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-	{
-		downPressed = true;
-	}
-	else
-	{
-		downPressed = false;
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-	{
-		leftPressed = true;
-	}
-	else
-	{
-		leftPressed = false;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+		{
+			mWorldView.zoom(1.02);
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+		{
+			mWorldView.zoom(0.98);
+		}
 	}
 
 
@@ -233,13 +233,15 @@ void Game::update(sf::Time dTime)
 	{
 		camPos.x -= (moveVel* dTime.asSeconds());
 	}
+	sf::Vector2i mousePos = sf::Mouse::getPosition(mWindow);
+	positionMarker.setPosition(camPos);
 	mWorldView.setCenter(camPos);
-	
+
+
 	for (Object3DPtr& Object3D : Object3DsVector)
 	{
 		Object3D->update(dTime);
 	}
-	positionMarker.setPosition(camPos);
 
 	std::sort(Object3DsVector.begin(), Object3DsVector.end(), sortByDistance);
 }
@@ -276,14 +278,27 @@ void Game::render()
 		mWindow.draw(*tile);
 	}
 
+	mWindow.draw(positionMarker);
+
 	for (Object3DPtr& Object3D : Object3DsVector)
 	{
 		mWindow.draw(*Object3D);
 	}
-	mWindow.draw(positionMarker);
 	mWindow.setView(mUIView);
 	mWindow.draw(mTextBackground);
 	mWindow.draw(mStatisticsText);
 
 	mWindow.display();
+}
+
+void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed)
+{
+	if (key == sf::Keyboard::W || key == sf::Keyboard::Up)
+		upPressed = isPressed;
+	else if (key == sf::Keyboard::S || key == sf::Keyboard::Down)
+		downPressed = isPressed;
+	else if (key == sf::Keyboard::A || key == sf::Keyboard::Left)
+		leftPressed = isPressed;
+	else if (key == sf::Keyboard::D || key == sf::Keyboard::Right)
+		rightPressed = isPressed;
 }

@@ -1,4 +1,5 @@
 #include "Utilities.h"
+#include <cmath>
 
 void drawDebugLine(const sf::Vector2f& A, const sf::Vector2f& B, sf::RenderWindow& window, const sf::Color& colour)
 {

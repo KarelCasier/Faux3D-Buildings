@@ -12,7 +12,8 @@ public:
 	enum Object3DType
 	{
 		Building,
-		LampPost
+		LampPost,
+		LampTop
 	};
 
 	Object3D(const TextureHolder& textures, sf::Vector2f pos, sf::Vector2i dim, Object3DType type, float height);
@@ -20,6 +21,9 @@ public:
 	void update(sf::Time dTime);
 
 	const sf::Vector2f& getCenter() { return groundCenter; }
+	void                setZPos(float pos) { zPos = pos; }
+	const float&        getZPos() { return zPos; }
+	const float&        getHeight() { return mHeight; }
 
 private:
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
@@ -43,6 +47,7 @@ private:
 	sf::Vector2i	dimentions;
 
 	float			mHeight;
+	float           zPos;
 
 	sf::Vector2f	mPos;
 

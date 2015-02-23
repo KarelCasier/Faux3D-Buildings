@@ -38,6 +38,7 @@ private:
 	void					render();
 
 	void					updateStatistics(sf::Time elapsedTime);
+	void                    handlePlayerInput(sf::Keyboard::Key key, bool state);
 
 private:
 	static Game*			s_pInstance;
@@ -54,6 +55,7 @@ private:
 
 	sf::View				mUIView;
 	sf::View				mWorldView;
+	float                   worldZoom;
 
 	std::vector<Object3DPtr>		Object3DsVector;
 	std::vector<sf::RectangleShape*>groundTiles;
